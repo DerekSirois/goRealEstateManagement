@@ -7,6 +7,8 @@ import (
 
 func (a *App) Routes() {
 	a.Router.HandleFunc("/", a.index())
+	a.Router.HandleFunc("/login", a.login()).Methods("POST")
+	a.Router.HandleFunc("/register", a.register()).Methods("POST")
 }
 
 func (a *App) index() http.HandlerFunc {

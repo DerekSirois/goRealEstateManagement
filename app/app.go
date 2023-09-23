@@ -1,6 +1,8 @@
 package app
 
 import (
+	"GoRealEstateManagement/app/model"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,9 +15,14 @@ type App struct {
 	Router *mux.Router
 }
 
+type Response struct {
+	Msg string
+}
+
 func New() (*App, error) {
 	dsn := "host=localhost user=dev password=abcde dbname=GoRealEstateManagement sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db.AutoMigrate(&model.User{})
 	if err != nil {
 		return nil, err
 	}
@@ -28,4 +35,17 @@ func New() (*App, error) {
 func (a *App) Run() {
 	log.Println("Serving on port 8000")
 	log.Fatalln(http.ListenAndServe(":8000", a.Router))
+}
+
+func (a *App) respond(w http.ResponseWriter, r *http.Request, data any, statusCode int) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	if data == nil {
+		return
+	}
+
+	err := json.NewEncoder(w).Encode(data)
+	if err != nil {
+		log.Printf("Cannot format json. err=%v\n", err)
+	}
 }

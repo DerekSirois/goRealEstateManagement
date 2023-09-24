@@ -26,7 +26,7 @@ type ResponseToken struct {
 func New() (*App, error) {
 	dsn := "host=localhost user=dev password=abcde dbname=GoRealEstateManagement sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	db.AutoMigrate(&model.User{})
+	_ = db.AutoMigrate(&model.User{})
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (a *App) Run() {
 	log.Fatalln(http.ListenAndServe(":8000", a.Router))
 }
 
-func (a *App) Respond(w http.ResponseWriter, r *http.Request, data any, statusCode int) {
+func (a *App) Respond(w http.ResponseWriter, _ *http.Request, data any, statusCode int) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	if data == nil {

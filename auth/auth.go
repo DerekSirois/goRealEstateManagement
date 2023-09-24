@@ -58,7 +58,7 @@ func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Re
 	})
 }
 
-func respond(w http.ResponseWriter, r *http.Request, data any, statusCode int) {
+func respond(w http.ResponseWriter, _ *http.Request, data any, statusCode int) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	if data == nil {

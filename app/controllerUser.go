@@ -1,7 +1,8 @@
 package app
 
 import (
-	"GoRealEstateManagement/app/model"
+	"GoRealEstateManagement/auth"
+	"GoRealEstateManagement/model"
 	"encoding/json"
 	"net/http"
 )
@@ -11,20 +12,25 @@ func (a *App) login() http.HandlerFunc {
 		uJson := &model.UserJson{}
 		err := json.NewDecoder(r.Body).Decode(uJson)
 		if err != nil {
-			a.respond(w, r, &Response{Msg: err.Error()}, http.StatusBadRequest)
+			a.Respond(w, r, &Response{Msg: err.Error()}, http.StatusBadRequest)
 			return
 		}
 		u := &model.User{}
 		err = u.GetByUsername(uJson.Username, a.DB)
 		if err != nil {
-			a.respond(w, r, &Response{Msg: err.Error()}, http.StatusInternalServerError)
+			a.Respond(w, r, &Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
 		}
 		if !model.CheckPasswordHash(uJson.Password, u.Password) {
-			a.respond(w, r, &Response{Msg: "Wrong password or username"}, http.StatusInternalServerError)
+			a.Respond(w, r, &Response{Msg: "Wrong password or username"}, http.StatusInternalServerError)
 			return
 		}
-		a.respond(w, r, &Response{Msg: "You are logged in"}, http.StatusOK)
+		token, err := auth.CreateJWTToken(int(u.ID), u.Username)
+		if err != nil {
+			a.Respond(w, r, &Response{Msg: err.Error()}, http.StatusInternalServerError)
+			return
+		}
+		a.Respond(w, r, &ResponseToken{Token: token}, http.StatusOK)
 	}
 }
 
@@ -33,15 +39,15 @@ func (a *App) register() http.HandlerFunc {
 		uJson := &model.UserJson{}
 		err := json.NewDecoder(r.Body).Decode(uJson)
 		if err != nil {
-			a.respond(w, r, &Response{Msg: err.Error()}, http.StatusBadRequest)
+			a.Respond(w, r, &Response{Msg: err.Error()}, http.StatusBadRequest)
 			return
 		}
 		u := uJson.MapToUser()
 		err = u.Create(a.DB)
 		if err != nil {
-			a.respond(w, r, &Response{Msg: err.Error()}, http.StatusInternalServerError)
+			a.Respond(w, r, &Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
 		}
-		a.respond(w, r, &Response{Msg: "User created successfully"}, http.StatusOK)
+		a.Respond(w, r, &Response{Msg: "User created successfully"}, http.StatusOK)
 	}
 }

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"GoRealEstateManagement/app/model"
+	"GoRealEstateManagement/model"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
@@ -17,6 +17,10 @@ type App struct {
 
 type Response struct {
 	Msg string
+}
+
+type ResponseToken struct {
+	Token string
 }
 
 func New() (*App, error) {
@@ -37,7 +41,7 @@ func (a *App) Run() {
 	log.Fatalln(http.ListenAndServe(":8000", a.Router))
 }
 
-func (a *App) respond(w http.ResponseWriter, r *http.Request, data any, statusCode int) {
+func (a *App) Respond(w http.ResponseWriter, r *http.Request, data any, statusCode int) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	if data == nil {

@@ -1,12 +1,13 @@
 package app
 
 import (
+	"GoRealEstateManagement/auth"
 	"fmt"
 	"net/http"
 )
 
 func (a *App) Routes() {
-	a.Router.HandleFunc("/", a.index())
+	a.Router.HandleFunc("/", auth.VerifyJWT(a.index()))
 	a.Router.HandleFunc("/login", a.login()).Methods("POST")
 	a.Router.HandleFunc("/register", a.register()).Methods("POST")
 }

@@ -2,7 +2,6 @@ package app
 
 import (
 	"GoRealEstateManagement/model"
-	"encoding/json"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,10 +12,6 @@ import (
 type App struct {
 	DB     *gorm.DB
 	Router *mux.Router
-}
-
-type Response struct {
-	Msg string
 }
 
 type ResponseToken struct {
@@ -39,17 +34,4 @@ func New() (*App, error) {
 func (a *App) Run() {
 	log.Println("Serving on port 8000")
 	log.Fatalln(http.ListenAndServe(":8000", a.Router))
-}
-
-func (a *App) Respond(w http.ResponseWriter, _ *http.Request, data any, statusCode int) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	if data == nil {
-		return
-	}
-
-	err := json.NewEncoder(w).Encode(data)
-	if err != nil {
-		log.Printf("Cannot format json. err=%v\n", err)
-	}
 }

@@ -1,10 +1,9 @@
 package auth
 
 import (
-	"encoding/json"
+	"GoRealEstateManagement/utils"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"log"
 	"net/http"
 	"time"
 )
@@ -43,34 +42,17 @@ func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Re
 				return []byte(secretKey), nil
 			})
 			if err != nil {
-				respond(writer, request, &Response{Msg: err.Error()}, http.StatusBadRequest)
+				utils.Respond(writer, request, &utils.Response{Msg: err.Error()}, http.StatusBadRequest)
 				return
 			}
 			if !token.Valid {
-				respond(writer, request, &Response{Msg: "Invalid token"}, http.StatusBadRequest)
+				utils.Respond(writer, request, &utils.Response{Msg: "Invalid token"}, http.StatusBadRequest)
 				return
 			}
 			endpointHandler(writer, request)
 		} else {
-			respond(writer, request, &Response{Msg: "Missing token"}, http.StatusBadRequest)
+			utils.Respond(writer, request, &utils.Response{Msg: "Missing token"}, http.StatusBadRequest)
 			return
 		}
 	})
-}
-
-func respond(w http.ResponseWriter, _ *http.Request, data any, statusCode int) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	if data == nil {
-		return
-	}
-
-	err := json.NewEncoder(w).Encode(data)
-	if err != nil {
-		log.Printf("Cannot format json. err=%v\n", err)
-	}
-}
-
-type Response struct {
-	Msg string
 }

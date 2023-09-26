@@ -8,10 +8,10 @@ type Property struct {
 	Address string
 }
 
-func GetAllByOwner(db *gorm.DB, ownerId uint) (*[]Property, error) {
-	var p *[]Property
-	result := db.Where("ownerId = ?", ownerId).Find(p)
-	return p, result.Error
+func GetAllPropertyByOwner(db *gorm.DB, ownerId uint) (*[]Property, error) {
+	var p []Property
+	result := db.Where("owner_id = ?", ownerId).Find(&p)
+	return &p, result.Error
 }
 
 func (p *Property) GetById(db *gorm.DB, id uint) error {
@@ -25,7 +25,7 @@ func (p *Property) Create(db *gorm.DB) error {
 }
 
 func (p *Property) Update(db *gorm.DB, id uint) error {
-	var pDb *Property
+	pDb := &Property{}
 	err := pDb.GetById(db, id)
 	if err != nil {
 		return err
@@ -34,7 +34,7 @@ func (p *Property) Update(db *gorm.DB, id uint) error {
 	return result.Error
 }
 
-func Delete(db *gorm.DB, id uint) error {
+func DeleteProperty(db *gorm.DB, id uint) error {
 	result := db.Delete(&Property{}, id)
 	return result.Error
 }

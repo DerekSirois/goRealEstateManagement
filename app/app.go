@@ -22,6 +22,7 @@ func New() (*App, error) {
 	dsn := "host=localhost user=dev password=abcde dbname=GoRealEstateManagement sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	_ = db.AutoMigrate(&model.User{})
+	_ = db.AutoMigrate(&model.Property{})
 	if err != nil {
 		return nil, err
 	}

@@ -1,15 +1,16 @@
-package app
+package controller
 
 import (
 	"GoRealEstateManagement/model"
 	"GoRealEstateManagement/utils"
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 )
 
-func (a *App) getAllPropertyByOwner() http.HandlerFunc {
+func GetAllPropertyByOwner(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.ParseUint(vars["id"], 10, 32)
@@ -17,7 +18,7 @@ func (a *App) getAllPropertyByOwner() http.HandlerFunc {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusBadRequest)
 			return
 		}
-		properties, err := model.GetAllPropertyByOwner(a.DB, uint(id))
+		properties, err := model.GetAllPropertyByOwner(db, uint(id))
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -26,7 +27,7 @@ func (a *App) getAllPropertyByOwner() http.HandlerFunc {
 	}
 }
 
-func (a *App) getPropertyById() http.HandlerFunc {
+func GetPropertyById(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.ParseUint(vars["id"], 10, 32)
@@ -35,7 +36,7 @@ func (a *App) getPropertyById() http.HandlerFunc {
 			return
 		}
 		p := &model.Property{}
-		err = p.GetById(a.DB, uint(id))
+		err = p.GetById(db, uint(id))
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -44,7 +45,7 @@ func (a *App) getPropertyById() http.HandlerFunc {
 	}
 }
 
-func (a *App) createProperty() http.HandlerFunc {
+func CreateProperty(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := &model.Property{}
 		err := json.NewDecoder(r.Body).Decode(p)
@@ -52,7 +53,7 @@ func (a *App) createProperty() http.HandlerFunc {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusBadRequest)
 			return
 		}
-		err = p.Create(a.DB)
+		err = p.Create(db)
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -61,7 +62,7 @@ func (a *App) createProperty() http.HandlerFunc {
 	}
 }
 
-func (a *App) updateProperty() http.HandlerFunc {
+func UpdateProperty(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := &model.Property{}
 		err := json.NewDecoder(r.Body).Decode(p)
@@ -76,7 +77,7 @@ func (a *App) updateProperty() http.HandlerFunc {
 			return
 		}
 
-		err = p.Update(a.DB, uint(id))
+		err = p.Update(db, uint(id))
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -85,7 +86,7 @@ func (a *App) updateProperty() http.HandlerFunc {
 	}
 }
 
-func (a *App) deleteProperty() http.HandlerFunc {
+func DeleteProperty(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.ParseUint(vars["id"], 10, 32)
@@ -93,7 +94,7 @@ func (a *App) deleteProperty() http.HandlerFunc {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusBadRequest)
 			return
 		}
-		err = model.DeleteProperty(a.DB, uint(id))
+		err = model.DeleteProperty(db, uint(id))
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return

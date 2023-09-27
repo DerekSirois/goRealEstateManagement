@@ -1,14 +1,15 @@
-package app
+package controller
 
 import (
 	"GoRealEstateManagement/auth"
 	"GoRealEstateManagement/model"
 	"GoRealEstateManagement/utils"
 	"encoding/json"
+	"gorm.io/gorm"
 	"net/http"
 )
 
-func (a *App) login() http.HandlerFunc {
+func Login(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		uJson := &model.UserJson{}
 		err := json.NewDecoder(r.Body).Decode(uJson)
@@ -17,7 +18,7 @@ func (a *App) login() http.HandlerFunc {
 			return
 		}
 		u := &model.User{}
-		err = u.GetByUsername(uJson.Username, a.DB)
+		err = u.GetByUsername(uJson.Username, db)
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -31,11 +32,11 @@ func (a *App) login() http.HandlerFunc {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
 		}
-		utils.Respond(w, r, &ResponseToken{Token: token}, http.StatusOK)
+		utils.Respond(w, r, &utils.ResponseToken{Token: token}, http.StatusOK)
 	}
 }
 
-func (a *App) register() http.HandlerFunc {
+func Register(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		uJson := &model.UserJson{}
 		err := json.NewDecoder(r.Body).Decode(uJson)
@@ -44,7 +45,7 @@ func (a *App) register() http.HandlerFunc {
 			return
 		}
 		u := uJson.MapToUser()
-		err = u.Create(a.DB)
+		err = u.Create(db)
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return

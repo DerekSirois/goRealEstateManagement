@@ -14,10 +14,6 @@ type App struct {
 	Router *mux.Router
 }
 
-type ResponseToken struct {
-	Token string
-}
-
 func New() (*App, error) {
 	dsn := "host=localhost user=dev password=abcde dbname=GoRealEstateManagement sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

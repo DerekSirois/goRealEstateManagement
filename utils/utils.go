@@ -10,6 +10,10 @@ type Response struct {
 	Msg string
 }
 
+type ResponseToken struct {
+	Token string
+}
+
 func Respond(w http.ResponseWriter, _ *http.Request, data any, statusCode int) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)

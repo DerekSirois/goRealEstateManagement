@@ -19,6 +19,7 @@ func New() (*App, error) {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	_ = db.AutoMigrate(&model.User{})
 	_ = db.AutoMigrate(&model.Property{})
+	_ = db.AutoMigrate(&model.Unit{})
 	if err != nil {
 		return nil, err
 	}

@@ -36,7 +36,7 @@ func GetPropertyById(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 		p := &model.Property{}
-		err = p.GetById(db, uint(id))
+		err = p.GetPropertyById(db, uint(id))
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -53,7 +53,7 @@ func CreateProperty(db *gorm.DB) http.HandlerFunc {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusBadRequest)
 			return
 		}
-		err = p.Create(db)
+		err = p.CreateProperty(db)
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return
@@ -77,7 +77,7 @@ func UpdateProperty(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		err = p.Update(db, uint(id))
+		err = p.UpdateProperty(db, uint(id))
 		if err != nil {
 			utils.Respond(w, r, &utils.Response{Msg: err.Error()}, http.StatusInternalServerError)
 			return

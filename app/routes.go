@@ -22,6 +22,14 @@ func (a *App) propertyRoutes() {
 	a.Router.HandleFunc("/api/property/{id:[0-9]+}", controller.DeleteProperty(a.DB)).Methods("DELETE")
 }
 
+func (a *App) unitRoutes() {
+	a.Router.HandleFunc("/api/unit/property/{id:[0-9]+}", controller.GetAllUnitByProperty(a.DB)).Methods("GET")
+	a.Router.HandleFunc("/api/unit/{id:[0-9]+}", controller.GetUnitById(a.DB)).Methods("GET")
+	a.Router.HandleFunc("/api/unit", controller.CreateUnit(a.DB)).Methods("POST")
+	a.Router.HandleFunc("/api/unit/{id:[0-9]+}", controller.UpdateUnit(a.DB)).Methods("PUT")
+	a.Router.HandleFunc("/api/unit/{id:[0-9]+}", controller.DeleteUnit(a.DB)).Methods("DELETE")
+}
+
 func (a *App) index() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintln(w, "Welcome to the Go real estate management tool")
